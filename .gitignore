@@ -1,3 +1,5 @@
+.idea
+
 server/.phpunit.cache
 server/node_modules
 server/public/build
