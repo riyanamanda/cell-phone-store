@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
@@ -25,22 +26,22 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return ResponseFormatter::error(
+                null,
+                'Unauthorized'
+            );
         }
 
-        return $this->respondWithToken($token);
-    }
-
-    /**
-     * Get the token array structure.
-     */
-    protected function respondWithToken(string $token): JsonResponse
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
+        $data = [
+            'token' => $token,
+            'type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-        ]);
+        ];
+
+        return ResponseFormatter::success(
+            $data,
+            'Login successfully'
+        );
     }
 
     /**
